@@ -1,0 +1,23 @@
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+
+# Next.js
+node_modules/
+.next/
+out/
+
+# Local tooling
+.vscode/
+.idea/
+
+# System
+.DS_Store
