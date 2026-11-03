@@ -21,3 +21,11 @@ out/
 
 # System
 .DS_Store
+
+# Local databases
+*.db
+*.db-*
+*.sqlite3
+
+# Keep example environment files
+!.env.example
