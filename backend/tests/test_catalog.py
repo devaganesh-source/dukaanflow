@@ -46,28 +46,9 @@ def test_health(client):
     assert response.json() == {"status": "ok"}
 
 
-def test_catalogue(client):
+
+def test_catalogue_requires_login(client):
     response = client.get("/api/products")
 
-    assert response.status_code == 200
-
-    products = response.json()["products"]
-
-    assert len(products) == 6
-
-    assert len(
-        {product["sku"] for product in products}
-    ) == 6
-
-    biscuit = next(
-        product
-        for product in products
-        if product["sku"] == "SKU-BS-075"
-    )
-
-    assert biscuit["price_paise"] == 77760
-    assert biscuit["stock_cases"] == 340
-
-    for product in products:
-        assert product["price_paise"] > 0
-        assert product["stock_cases"] >= 0
+    assert response.status_code == 401
+    assert response.json()["detail"] == "Login required"

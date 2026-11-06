@@ -14,6 +14,8 @@ import {
   Sparkles,
 } from "lucide-react";
 
+import LogoutButton from "./logout-button";
+import { useRetailerDraft } from "@/lib/retailer-draft";
 export type Product = {
   sku: string;
   name: string;
@@ -37,16 +39,25 @@ const categoryColors: Record<string, string> = {
   Beverages: "bg-emerald-50 text-emerald-700",
 };
 
+
+
 export default function RetailerCatalog({
   products,
+  retailerName,
+  retailerId,
 }: {
   products: Product[];
+  retailerName: string;
+  retailerId: number;
 }) {
+
+
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
-  const [quantities, setQuantities] = useState<
-    Record<string, number>
-  >({});
+  const [quantities, setQuantities] = useRetailerDraft(
+  retailerId,
+  products
+);
 
   const draftRef = useRef<HTMLElement>(null);
 
@@ -120,9 +131,14 @@ export default function RetailerCatalog({
             </div>
           </div>
 
-          <div className="rounded-full bg-[#edf5ef] px-3 py-2 text-xs font-medium text-[#176b52]">
-            Demo retailer
-          </div>
+        <div className="flex items-center gap-2">
+          <span className="hidden rounded-full bg-[#edf5ef] px-3 py-2 text-xs font-medium text-[#176b52] sm:inline">
+            {retailerName}
+         </span>
+
+         <LogoutButton />
+         </div>
+
         </div>
       </header>
 
