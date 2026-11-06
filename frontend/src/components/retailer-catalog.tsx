@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useMemo, useRef, useState } from "react";
@@ -39,8 +38,6 @@ const categoryColors: Record<string, string> = {
   Beverages: "bg-emerald-50 text-emerald-700",
 };
 
-
-
 export default function RetailerCatalog({
   products,
   retailerName,
@@ -50,14 +47,12 @@ export default function RetailerCatalog({
   retailerName: string;
   retailerId: number;
 }) {
-
-
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
   const [quantities, setQuantities] = useRetailerDraft(
-  retailerId,
-  products
-);
+    retailerId,
+    products
+  );
 
   const draftRef = useRef<HTMLElement>(null);
 
@@ -131,25 +126,24 @@ export default function RetailerCatalog({
             </div>
           </div>
 
-        <div className="flex items-center gap-2">
-          <span className="hidden rounded-full bg-[#edf5ef] px-3 py-2 text-xs font-medium text-[#176b52] sm:inline">
-            {retailerName}
-         </span>
+          <div className="flex items-center gap-2">
+            <span className="hidden rounded-full bg-[#edf5ef] px-3 py-2 text-xs font-medium text-[#176b52] sm:inline">
+              {retailerName}
+            </span>
 
-         <LogoutButton />
-         </div>
-
+            <LogoutButton />
+          </div>
         </div>
       </header>
 
       <main className="mx-auto max-w-7xl px-4 pb-28 pt-6 sm:px-6 lg:pb-12">
-      <section className="mb-6 overflow-hidden rounded-2xl bg-[#173e30] p-5 text-white sm:p-6">
+        <section className="mb-6 overflow-hidden rounded-2xl bg-[#173e30] p-5 text-white sm:p-6">
           <div className="max-w-xl">
             <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-[#b8d9c5]">
               Your everyday ordering workspace
             </p>
 
-          <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+            <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
               Restock, without the back-and-forth.
             </h1>
 
@@ -182,8 +176,8 @@ export default function RetailerCatalog({
               </label>
 
               <Search
-                 size={19}
-                 className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#748379]"
+                size={19}
+                className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#748379]"
               />
 
               <input
@@ -445,6 +439,16 @@ export default function RetailerCatalog({
               <ArrowRight size={15} />
               Checkout is the next feature.
             </div>
+
+            {totalCases > 0 && (
+              <a
+                 href="/checkout"
+                 className="mt-5 flex min-h-12 w-full items-center justify-center rounded-xl bg-[#176b52] px-5 text-sm font-semibold text-white hover:bg-[#12543f]"
+              >
+                Proceed to checkout →
+              </a>
+            )}
+
           </aside>
         </div>
       </main>
@@ -467,6 +471,10 @@ export default function RetailerCatalog({
             </span>
             <span>{money(subtotalPaise)}</span>
           </button>
+
+          <a href="/checkout" className="mt-2 flex min-h-11 items-center justify-center rounded-xl border border-[#176b52] bg-white px-4 text-sm font-semibold text-[#176b52] shadow-sm">
+            Proceed to checkout
+          </a>
         </div>
       )}
     </div>

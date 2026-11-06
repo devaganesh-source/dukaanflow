@@ -14,7 +14,7 @@ from .auth import (
 from .catalog import PRODUCTS
 from .database import Base, SessionLocal, engine, get_db
 from .models import Product, RetailerPrice, User
-
+from .orders import router as orders_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -85,7 +85,7 @@ app = FastAPI(
     openapi_url="/api/openapi.json",
     lifespan=lifespan,
 )
-
+app.include_router(orders_router)
 app.include_router(auth_router)
 
 

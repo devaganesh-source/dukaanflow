@@ -88,3 +88,58 @@ Current product prices and stock are loaded
 again from the backend.
 
 Drafts are not yet submitted orders.
+
+## A10 — Order persistence
+
+Orders are linked to the authenticated retailer.
+
+Each order stores a snapshot of product name,
+case pack size, charged unit price, paid cases,
+free cases, discounts and totals.
+
+Existing order prices are not recalculated when
+catalogue prices change.
+
+The same idempotency key cannot create multiple
+orders for the same retailer.
+
+New orders initially use the "submitted" status.
+
+Order status transitions and Tally export behavior
+will be implemented in later builds.
+
+The checkout API will calculate all order values
+on the server using current database prices and stock.
+
+## A11 — Checkout API
+
+Only authenticated retailer accounts may place orders.
+
+The checkout request contains SKUs, quantities in
+cases, and an idempotency key.
+
+Retailer prices, schemes and stock quantities are
+read and validated on the server.
+
+Free promotional cases consume inventory.
+
+All stock deductions and order inserts occur in
+one database transaction.
+
+A failed order rolls back every inventory change.
+
+Repeating an identical request key and cart returns
+the existing order without another stock deduction.
+
+Reusing the key with a different cart is rejected.
+
+Order details are scoped to the authenticated
+retailer.
+
+SQLite is used for local development. Concurrent
+checkout and lock-contention behavior must also
+be validated against PostgreSQL before production.
+
+Tax treatment follows the documented catalogue
+price assumption; GST is not separately calculated
+by this checkout version.
