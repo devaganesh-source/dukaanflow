@@ -143,3 +143,61 @@ be validated against PostgreSQL before production.
 Tax treatment follows the documented catalogue
 price assumption; GST is not separately calculated
 by this checkout version.
+
+## A12 — Distributor order dashboard
+
+Order-desk users can view retailer orders across
+the distributor's current dataset.
+
+Retailers cannot access distributor dashboard APIs.
+
+The dashboard returns:
+- Order counts by status
+- Total order value in paise
+- Paginated orders
+- Retailer names
+- Saved order details and item snapshots
+
+Order lists are sorted newest-first using
+created_at and order ID.
+
+Status and retailer filters affect the returned
+order list and filtered count.
+
+Dashboard summary metrics cover all orders,
+regardless of active list filters.
+
+Pagination defaults to 20 orders per page and
+is limited to 50.
+
+The dashboard is read-only at this stage.
+
+Order status updates will be added in Build 05C.
+
+Tally-compatible export will be added in a
+later Build 05 milestone.
+
+## A15 — Tally export
+
+Orders are exported as TallyPrime Sales Order XML.
+
+Only submitted orders may generate a new export.
+
+Exported XML is stored and can be downloaded
+again without a new status event.
+
+Export generation, saved XML, status transition
+and audit event share one database transaction.
+
+On-hold orders cannot be exported.
+
+The exported state means XML was generated,
+not that TallyPrime accepted the file.
+
+No tax amounts are generated in this demo.
+
+Stock masters are identified by SKU. The Tally
+company must have matching master records.
+
+The user must review import errors and possible
+duplicate vouchers in TallyPrime.

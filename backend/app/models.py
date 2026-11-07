@@ -6,6 +6,7 @@ from sqlalchemy import (
     Integer,
     String,
     UniqueConstraint,
+    Text,
 
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -225,4 +226,64 @@ class OrderItem(Base):
 
     order: Mapped["Order"] = relationship(
         back_populates="items",
+    )
+
+class OrderStatusEvent(Base):
+    __tablename__ = "order_status_events"
+
+    __table_args__ = (
+        CheckConstraint(
+            "old_status IN ('submitted', 'on_hold')",
+            name="valid_previous_order_status",
+        ),
+        CheckConstraint(
+            "new_status IN ('submitted', 'on_hold', 'exported')",
+            name="valid_next_order_status",
+        ),
+        CheckConstraint(
+            "old_status != new_status",
+            name="order_status_must_change",
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+
+    order_id: Mapped[int] = mapped_column(
+        ForeignKey("orders.id"),
+        index=True,
+        nullable=False,
+    )
+
+    actor_user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id"),
+        nullable=False,
+    )
+
+    old_status: Mapped[str] = mapped_column(String(20))
+    new_status: Mapped[str] = mapped_column(String(20))
+    reason: Mapped[str] = mapped_column(String(300))
+    changed_at: Mapped[int] = mapped_column(Integer)
+
+
+class OrderExport(Base):
+    __tablename__ = "order_exports"
+
+    order_id: Mapped[int] = mapped_column(
+        ForeignKey("orders.id"),
+        primary_key=True,
+    )
+
+    created_by: Mapped[int] = mapped_column(
+        ForeignKey("users.id"),
+        nullable=False,
+    )
+
+    created_at: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False,
+    )
+
+    xml_payload: Mapped[str] = mapped_column(
+        Text,
+        nullable=False,
     )
