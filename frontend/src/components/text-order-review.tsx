@@ -1,4 +1,3 @@
-
 "use client";
 
 import {
@@ -12,6 +11,7 @@ import {
 import { useRouter } from "next/navigation";
 
 import type { Product } from "./retailer-catalog";
+import MediaOrderCapture from "./media-order-capture";
 
 type Candidate = {
   sku: string;
@@ -87,6 +87,7 @@ export default function TextOrderReview({
   );
   const [rows, setRows] = useState<ReviewRow[]>([]);
   const [busy, setBusy] = useState(false);
+  const [mediaBusy, setMediaBusy] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [casesConfirmed, setCasesConfirmed] = useState(false);
@@ -173,7 +174,7 @@ export default function TextOrderReview({
   ) {
     event.preventDefault();
 
-    if (busy) return;
+    if (busy || mediaBusy) return;
 
     resetReview();
 
@@ -439,38 +440,52 @@ export default function TextOrderReview({
             Your order message
           </label>
 
-          <textarea
-            id="text-order-message"
-            rows={3}
-            maxLength={2000}
-            disabled={busy}
-            value={message}
-            onChange={(event) => {
-              saveMessage(event.target.value);
-              resetReview();
-            }}
-            placeholder="Example: 2 peti washing powder 1 kilo, 5 cases biscuit 75g"
-            className="w-full resize-y rounded-xl border border-[#d7e3d8] bg-white px-4 py-3 text-sm text-[#17372c] outline-none focus:border-[#176b52] focus:ring-2 focus:ring-[#176b52]/15"
-          />
+          <div className="overflow-hidden rounded-2xl border border-[#d7e3d8] bg-white transition focus-within:border-[#176b52] focus-within:ring-2 focus-within:ring-[#176b52]/15">
+            <textarea
+              id="text-order-message"
+              rows={3}
+              maxLength={2000}
+              disabled={busy || mediaBusy}
+              value={message}
+              onChange={(event) => {
+                saveMessage(event.target.value);
+                resetReview();
+              }}
+              placeholder="Type your order in English or Hinglish?"
+              className="block w-full resize-y bg-transparent px-4 py-3 text-sm text-[#17372c] outline-none"
+            />
+            <div className="flex flex-wrap items-start justify-between gap-2 border-t border-[#e8efe8] px-2 py-2 sm:items-center">
+              <MediaOrderCapture
+                disabled={busy}
+                onBusyChange={setMediaBusy}
+                onTranscript={(transcript) => {
+                  if (message.trim() && !window.confirm(
+                    "Replace your current message with extracted text?"
+                  )) return false;
 
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <p className="text-xs text-[#64766a]">
-              Use cases, peti or cartons. Up to 15 order
-              lines.
-            </p>
+                  saveMessage(transcript);
+                  resetReview();
+                  setNotice("Check extracted text and quantities, then select Analyze order.");
+                  return true;
+                }}
+              />
 
-            <button
-              type="submit"
-              disabled={
-                busy ||
-                !message.trim() ||
-                products.length === 0
-              }
-              className="min-h-11 rounded-xl bg-[#176b52] px-5 text-sm font-semibold text-white transition hover:bg-[#10543e] disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {busy ? "Analyzing..." : "Analyze order"}
-            </button>
+              <button
+                type="submit"
+                disabled={busy || mediaBusy || !message.trim() || products.length === 0}
+                className="inline-flex min-h-10 shrink-0 items-center gap-2 rounded-xl bg-[#176b52] px-4 text-sm font-semibold text-white transition hover:bg-[#10543e] disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {busy ? "Analyzing?" : "Analyze order"}
+              </button>
+            </div>
           </div>
+
+          <p className="text-xs leading-5 text-[#64766a]">
+            Type, attach a handwritten photo or record a Hindi voice note.
+            Media is sent to Google Gemini for transcription, then
+            returned as editable text. Check quantities before analyzing;
+            nothing is ordered automatically. Up to 15 order lines.
+          </p>
         </form>
 
         {/* Error */}
