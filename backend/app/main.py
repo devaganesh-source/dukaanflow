@@ -15,10 +15,13 @@ from .catalog import PRODUCTS
 from .database import Base, SessionLocal, engine, get_db
 from .models import Product, RetailerPrice, User
 from .orders import router as orders_router
+from .order_history import router as order_history_router
+from .retailer_activity import router as retailer_activity_router
 from .order_desk_orders import router as order_desk_orders_router
 from .order_desk_status import router as order_desk_status_router
 from .order_desk_export import router as order_desk_export_router
 from .text_orders import router as text_orders_router
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -35,6 +38,8 @@ async def lifespan(app: FastAPI):
             demo_users = [
                 ("9000000001", "Demo Retailer", "retailer"),
                 ("9000000002", "Demo Order Desk", "order_desk"),
+                ("9000000003", "Market Corner Kirana", "retailer"),
+                ("9000000004", "Old Town Stores", "retailer"),
             ]
 
             for phone, name, role in demo_users:
@@ -53,29 +58,39 @@ async def lifespan(app: FastAPI):
 
             db.flush()
 
-            retailer = db.scalar(
+            # Fictional shops make the inactive dashboard
+            # useful on a fresh demo installation.
+            demo_retailers = db.scalars(
                 select(User).where(
-                    User.phone == "9000000001"
+                    User.phone.in_([
+                        "9000000001",
+                        "9000000003",
+                        "9000000004",
+                    ]),
+                    User.role == "retailer",
                 )
-            )
+            ).all()
 
-            for item in PRODUCTS:
-                key = (retailer.id, item["sku"])
+            for retailer in demo_retailers:
+                for item in PRODUCTS:
+                    key = (retailer.id, item["sku"])
 
-                if db.get(RetailerPrice, key) is None:
-                    price = item["price_paise"]
+                    if db.get(RetailerPrice, key) is None:
+                        price = item["price_paise"]
 
-                    # Example of a retailer-specific price.
-                    if item["sku"] == "SKU-BS-075":
-                        price = 76500
+                        if (
+                            retailer.phone == "9000000001"
+                            and item["sku"] == "SKU-BS-075"
+                        ):
+                            price = 76500
 
-                    db.add(
-                        RetailerPrice(
-                            retailer_id=retailer.id,
-                            product_sku=item["sku"],
-                            price_paise=price,
+                        db.add(
+                            RetailerPrice(
+                                retailer_id=retailer.id,
+                                product_sku=item["sku"],
+                                price_paise=price,
+                            )
                         )
-                    )
 
         db.commit()
 
@@ -89,12 +104,16 @@ app = FastAPI(
     openapi_url="/api/openapi.json",
     lifespan=lifespan,
 )
+
 app.include_router(orders_router)
+app.include_router(order_history_router)
+app.include_router(retailer_activity_router)
 app.include_router(auth_router)
 app.include_router(order_desk_orders_router)
 app.include_router(order_desk_status_router)
 app.include_router(order_desk_export_router)
 app.include_router(text_orders_router)
+
 
 @app.get("/api/health", tags=["system"])
 def health() -> dict[str, str]:
