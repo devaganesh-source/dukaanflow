@@ -18,6 +18,7 @@ from .orders import router as orders_router
 from .order_desk_orders import router as order_desk_orders_router
 from .order_desk_status import router as order_desk_status_router
 from .order_desk_export import router as order_desk_export_router
+from .text_orders import router as text_orders_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -93,6 +94,7 @@ app.include_router(auth_router)
 app.include_router(order_desk_orders_router)
 app.include_router(order_desk_status_router)
 app.include_router(order_desk_export_router)
+app.include_router(text_orders_router)
 
 @app.get("/api/health", tags=["system"])
 def health() -> dict[str, str]:

@@ -201,3 +201,115 @@ company must have matching master records.
 
 The user must review import errors and possible
 duplicate vouchers in TallyPrime.
+
+## A16 — Text order parsing
+
+Build 06A provides a deterministic, read-only
+natural-language order parser.
+
+The parser:
+- Accepts at most 2,000 characters and 15 lines
+- Supports common English and Hinglish terms
+- Matches only existing catalogue SKUs
+- Supports quantities expressed in cases/peti
+- Does not convert pieces, packets or boxes to cases
+- Checks requested quantities against current stock
+- Flags ambiguous products and unsupported units
+- Returns alternatives for retailer review
+- Never updates carts, orders or inventory
+
+Matching scores are heuristic relevance scores,
+not calibrated AI confidence probabilities.
+
+A matched result still requires retailer
+confirmation before it enters the cart.
+
+The later AI integration must be validated
+against the same real catalogue and constraints.
+
+## A17 — Gemini-assisted text order matching
+
+Build 06B adds optional Gemini AI assistance to
+the existing deterministic text-order parser.
+
+Model: gemini-3.5-flash-lite
+
+Configuration:
+- TEXT_ORDER_AI_ENABLED
+- GEMINI_API_KEY
+
+Gemini is called only for unresolved text
+when AI is enabled and an API key exists.
+
+The backend sends catalogue SKU, name and
+pack details to support product matching.
+
+Every AI response is checked against:
+- The original parsed lines
+- Unchanged case quantities
+- Existing catalogue SKUs
+- Available stock and unit restrictions
+
+Gemini cannot create new products, confirm a
+product selection, create orders or change stock.
+
+AI suggestions remain unresolved and require
+retailer confirmation in the review interface.
+
+Provider errors, timeouts, quota limits and
+invalid responses fall back to the rules parser.
+
+The parser response includes parser_source:
+rules, gemini or fallback.
+
+The system operates without a Gemini API key.
+
+For development, use synthetic messages and
+demo catalogue data. Free-tier API content may
+be used by Google to improve its products.
+
+Actual AI extraction quality must be evaluated
+using the Build 06D evaluation dataset.
+
+## A18 — Retailer text-order review
+
+Build 06C exposes AI-assisted text order parsing
+inside the existing retailer catalogue.
+
+The UI calls the protected Next.js route:
+POST /api/text-orders/parse
+
+The Next.js route forwards the authenticated
+retailer request to the FastAPI parser.
+
+The review displays:
+- Each original order line
+- Parsed product matches
+- Up to three parser suggestions
+- Match scores and warnings
+- Editable catalogue SKU and case quantity
+- Available stock and existing cart quantity
+
+Unresolved lines must be manually corrected
+or explicitly skipped.
+
+Unsupported or missing case quantities require
+manual input and explicit unit confirmation.
+
+Lines containing multiple quantities must be
+split and parsed again, or skipped.
+
+Repeated SKUs are combined before being added
+to the existing retailer draft.
+
+The client checks current catalogue stock, but
+the backend checkout remains authoritative
+for prices, schemes, free cases and stock.
+
+Parsing never creates an order.
+
+Only an explicit retailer confirmation adds
+reviewed lines to the existing cart.
+
+The final order is placed through the existing
+Build 04 checkout workflow.
