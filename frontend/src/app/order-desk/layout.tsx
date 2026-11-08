@@ -9,12 +9,13 @@ export default function OrderDeskLayout({
 }) {
   return (
     <>
-      <header className="border-b border-[#e1e8e1] bg-white">
+      <header className="border-b border-[#e1e8e1] bg-white print:hidden">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-4 sm:px-6">
           <div>
             <p className="text-base font-bold text-[#17372c]">
               DukaanFlow
             </p>
+
             <p className="text-xs text-[#64766a]">
               Distributor workspace
             </p>
@@ -29,6 +30,13 @@ export default function OrderDeskLayout({
               className="inline-flex min-h-11 items-center rounded-xl px-4 text-sm font-medium text-[#176b52] hover:bg-[#edf5ef]"
             >
               Retailers
+            </Link>
+
+            <Link
+              href="/order-desk/loading-list"
+              className="inline-flex min-h-11 items-center rounded-xl px-4 text-sm font-medium text-[#176b52] hover:bg-[#edf5ef]"
+            >
+              Van loading
             </Link>
 
             <Link
