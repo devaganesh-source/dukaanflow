@@ -1,9 +1,9 @@
 
 # DukaanFlow - Technical Design Document
 
-**GitHub:** https://github.com/devaganesh-source/dukaanflow  
-**Project:** Isocode Labs - Software Engineering Intern take-home, Brief 3  
-**Prepared:** 8 November 2026  
+**GitHub:** https://github.com/devaganesh-source/dukaanflow
+**Project:** Isocode Labs - Software Engineering Intern take-home, Brief 3
+**Prepared:** 8 November 2026
 **Version:** 1.0 | **Status:** Local application verified; no public live deployment claimed
 
 ## 1. Executive summary
