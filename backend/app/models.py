@@ -40,7 +40,7 @@ class User(Base):
 
     __table_args__ = (
         CheckConstraint(
-            "role IN ('retailer', 'order_desk')",
+            "role IN ('retailer', 'order_desk', 'salesman')",
             name="valid_user_role",
         ),
     )
@@ -286,4 +286,24 @@ class OrderExport(Base):
     xml_payload: Mapped[str] = mapped_column(
         Text,
         nullable=False,
+    )
+
+
+class SalesmanRetailer(Base):
+    """Explicit shop assignment; a salesman may never access every shop."""
+
+    __tablename__ = "salesman_retailers"
+
+    __table_args__ = (
+        CheckConstraint(
+            "salesman_id != retailer_id",
+            name="salesman_cannot_assign_self",
+        ),
+    )
+
+    salesman_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id"), primary_key=True
+    )
+    retailer_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id"), primary_key=True
     )

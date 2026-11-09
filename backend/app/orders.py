@@ -97,6 +97,26 @@ def submit_order(
     db: Session = Depends(get_db),
     retailer: User = Depends(require_retailer),
 ):
+    return create_order_for_retailer(
+        payload=payload,
+        response=response,
+        db=db,
+        retailer=retailer,
+    )
+
+
+def create_order_for_retailer(
+    *,
+    payload: CheckoutRequest,
+    response: Response,
+    db: Session,
+    retailer: User,
+    initial_status: str = "submitted",
+) -> Order:
+    """Shared validated checkout for retailer and salesman visit orders."""
+    if initial_status not in {"submitted", "on_hold"}:
+        raise ValueError("Invalid initial order status")
+
     skus = [item.sku for item in payload.items]
 
     if len(skus) != len(set(skus)):
@@ -213,7 +233,7 @@ def submit_order(
         order = Order(
             retailer_id=retailer.id,
             idempotency_key=payload.idempotency_key,
-            status="submitted",
+            status=initial_status,
             created_at=int(time.time()),
             subtotal_paise=subtotal,
             discount_paise=discount,

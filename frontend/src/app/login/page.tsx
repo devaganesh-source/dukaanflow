@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 
 type AuthResponse = {
-  role?: "retailer" | "order_desk";
+  role?: "retailer" | "order_desk"|"salesman";
   detail?: string;
 };
 
@@ -130,13 +130,22 @@ export default function LoginPage() {
         throw new Error(data.detail || "OTP verification failed.");
       }
 
-      if (data.role !== "retailer" && data.role !== "order_desk") {
-        throw new Error("Invalid account role.");
-      }
+      if (
+        data.role !== "retailer" &&
+        data.role !== "order_desk" &&
+        data.role !== "salesman"
+       ) {
+         throw new Error("Invalid account role.");
+       }
 
-      window.location.replace(
-        data.role === "retailer" ? "/" : "/order-desk"
-      );
+       const destination =
+         data.role === "retailer"
+           ? "/"
+           : data.role === "salesman"
+             ? "/salesman"
+             : "/order-desk";
+
+        window.location.replace(destination);
     } catch (err) {
       setError(
         err instanceof Error

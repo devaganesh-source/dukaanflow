@@ -271,6 +271,18 @@ def require_retailer(
     return user
 
 
+def require_salesman(
+    user: User = Depends(current_user),
+) -> User:
+    if user.role != "salesman":
+        raise HTTPException(
+            status_code=403,
+            detail="Salesman access required",
+        )
+
+    return user
+
+
 def require_order_desk(
     user: User = Depends(current_user),
 ) -> User:
