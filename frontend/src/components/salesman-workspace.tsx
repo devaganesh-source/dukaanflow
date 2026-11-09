@@ -11,6 +11,8 @@ import {
   WifiOff,
 } from "lucide-react";
 
+import LogoutButton from "./logout-button";
+
 import {
   clearOfflineSalesmanData,
   getOfflineSnapshot,
@@ -350,30 +352,46 @@ export default function SalesmanWorkspace({
             <p className="text-sm font-bold text-[#176b52]">DUKAANFLOW / FIELD SALES</p>
             <h1 className="mt-1 text-3xl font-semibold">Salesman visits</h1>
             <p className="mt-2 text-sm text-[#64766a]">
-              {salesmanName} · Offline drafts and safe synchronization
+              {salesmanName} · Capture visit orders, then sync when connected
             </p>
           </div>
-          <span className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold ${online ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-800"}`}>
-            {online ? <Wifi size={17} /> : <WifiOff size={17} />}
-            {online ? "Browser online" : "Browser offline"}
-          </span>
+          <div className="flex flex-wrap items-center gap-3">
+            <span
+              role="status"
+              className={`inline-flex min-h-11 items-center gap-2 rounded-full px-4 text-sm font-semibold ${online ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-800"}`}
+            >
+              {online ? <Wifi size={17} /> : <WifiOff size={17} />}
+              {online ? "Browser online" : "Browser offline"}
+            </span>
+            <LogoutButton />
+          </div>
         </header>
 
         <section className="rounded-2xl border border-[#dce5dd] bg-white p-5 sm:p-6">
           <h2 className="text-lg font-semibold">1. Prepare for store visits</h2>
           <p className="mt-2 text-sm leading-6 text-[#64766a]">
-            Save assigned shops and a timestamped catalogue for drafting during visits.
-            Prices and availability in this snapshot may be outdated; the server checks again at sync.
+            Save your assigned shops and catalogue before going offline.
+            Prices and stock are checked again when you sync.
           </p>
           <div className="mt-4 flex flex-wrap items-center gap-3">
             <button type="button" disabled={working || !liveSnapshot} onClick={() => void prepare()} className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-[#176b52] px-4 text-sm font-semibold text-white disabled:opacity-50">
-              <Download size={18} /> Save catalogue for offline visits
+              <Download size={18} /> Save for offline visits
             </button>
-            <span className="text-sm text-[#64766a]">{prepared ? "Saved on this device" : "Not prepared on this device"}</span>
+            <span role="status" className="text-sm text-[#64766a]">
+              {prepared
+                ? "Ready for offline drafting"
+                : snapshot
+                  ? "Live catalogue loaded — not saved offline"
+                  : "No catalogue saved on this device"}
+            </span>
           </div>
           {snapshot && (
             <p className="mt-3 text-xs text-[#64766a]">
-              Snapshot: {new Date(snapshot.fetchedAt).toLocaleString("en-IN")} · {snapshot.shops.length} assigned shops
+              Catalogue updated: {new Date(snapshot.fetchedAt).toLocaleString("en-IN", {
+                dateStyle: "medium",
+                timeStyle: "short",
+                timeZone: "Asia/Kolkata",
+              })} · {snapshot.shops.length} assigned shops
             </p>
           )}
           <p className="mt-2 text-xs text-amber-800">
@@ -384,7 +402,7 @@ export default function SalesmanWorkspace({
         <section className="rounded-2xl border border-[#dce5dd] bg-white p-5 sm:p-6">
           <h2 className="text-lg font-semibold">2. Record an order during a visit</h2>
           <p className="mt-2 text-sm text-[#64766a]">
-            Offline drafting works while this screen stays open. Saved drafts are not server orders.
+            Choose a shop and enter paid cases. You can save drafts without a connection while this page stays open.
           </p>
           <label htmlFor="visit-shop" className="mt-5 block text-sm font-semibold">Assigned retailer</label>
           <select id="visit-shop" className="mt-2 min-h-12 w-full rounded-xl border border-[#ceddcf] bg-white px-3" value={selectedShop ?? ""} onChange={(event) => chooseShop(Number(event.target.value))} disabled={working || !snapshot || loading}>
@@ -419,7 +437,7 @@ export default function SalesmanWorkspace({
                 </div>
               ))}
               <button type="button" disabled={working || loading} onClick={() => void saveDraft()} className="min-h-12 w-full rounded-xl bg-[#176b52] px-5 font-semibold text-white disabled:opacity-50">
-                Save local draft (do not submit)
+                Save offline draft
               </button>
             </div>
           )}
@@ -452,14 +470,16 @@ export default function SalesmanWorkspace({
             <h2 className="text-lg font-semibold">3. Pending device drafts ({drafts.length})</h2>
           </div>
           <p className="mt-2 text-sm text-[#64766a]">
-            Sync only after reconnecting. Failed or uncertain requests keep the local draft;
-            retries reuse its UUID to avoid duplicate orders. Successful orders enter the desk hold queue.
+            Sync when connected. Unsuccessful attempts keep your draft;
+            confirmed orders go on hold for distributor review.
           </p>
 
           {loading ? (
             <p className="mt-4 text-sm">Loading saved drafts...</p>
           ) : drafts.length === 0 ? (
-            <p className="mt-4 text-sm text-[#64766a]">No pending drafts on this device.</p>
+            <p className="mt-4 text-sm text-[#64766a]">
+              No drafts waiting to sync. Select a retailer above to record a visit order.
+            </p>
           ) : (
             <ul className="mt-4 space-y-3">
               {drafts.map((draft) => (
@@ -503,7 +523,7 @@ export default function SalesmanWorkspace({
         </section>
 
         <button type="button" disabled={working} onClick={() => void clearDeviceData()} className="min-h-11 rounded-xl border border-red-200 bg-white px-4 text-sm font-semibold text-red-700 disabled:opacity-50">
-          Clear this salesman&apos;s local data
+          Clear offline data
         </button>
       </div>
     </main>

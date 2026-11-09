@@ -156,7 +156,7 @@ async function OrderDetails({ params }: Props) {
 
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
-      <section className="min-w-0 overflow-hidden rounded-2xl border border-[#e1e8e1] bg-white">
+      <section className="min-w-0 self-start overflow-hidden rounded-2xl border border-[#e1e8e1] bg-white">
         <div className="flex flex-wrap items-start justify-between gap-4 border-b border-[#edf0ec] p-6">
           <div>
             <h2 className="text-xl font-semibold">

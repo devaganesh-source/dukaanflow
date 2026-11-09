@@ -197,7 +197,7 @@ async function OrdersContent({
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
         {metrics.map((metric) => (
           <section
             key={metric.label}
@@ -212,21 +212,14 @@ async function OrdersContent({
             </p>
           </section>
         ))}
+        <section className="col-span-2 rounded-2xl border border-[#e1e8e1] bg-white p-5 lg:col-span-1">
+          <p className="text-sm text-[#64766a]">Total order value</p>
+          <p className="mt-3 text-2xl font-semibold tabular-nums">
+            {money(dashboard.summary.total_value_paise)}
+          </p>
+          <p className="mt-1 text-xs text-[#64766a]">Excluding GST</p>
+        </section>
       </div>
-
-      <section className="rounded-2xl border border-[#e1e8e1] bg-white p-6">
-        <p className="text-sm text-[#64766a]">
-          Total order value
-        </p>
-
-        <p className="mt-2 text-2xl font-semibold">
-          {money(dashboard.summary.total_value_paise)}
-        </p>
-
-        <p className="mt-2 text-xs text-[#64766a]">
-          Across all orders. Excluding GST.
-        </p>
-      </section>
 
       <section className="overflow-hidden rounded-2xl border border-[#e1e8e1] bg-white">
         <div className="border-b border-[#edf0ec] p-5 sm:p-6">

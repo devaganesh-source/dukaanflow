@@ -103,21 +103,8 @@ async function CatalogContent() {
 
   return (
     <>
-      <nav
-        aria-label="Retailer order history"
-        className="border-b border-[#e1e8e1] bg-[#f7f8f4] px-4 py-2 sm:px-6"
-      >
-        <div className="mx-auto flex max-w-7xl justify-end">
-          <Link
-            href="/orders"
-            className="inline-flex min-h-10 items-center rounded-lg px-3 text-sm font-semibold text-[#176b52] hover:bg-[#e8f2e9]"
-          >
-            My previous orders →
-          </Link>
-        </div>
-      </nav>
 
-      <RetailerCatalog
+<RetailerCatalog
         key={session.user.id}
         products={products}
         retailerName={session.user.name}

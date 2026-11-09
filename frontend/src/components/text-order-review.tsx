@@ -9,6 +9,7 @@ import {
   type SetStateAction,
 } from "react";
 import { useRouter } from "next/navigation";
+import { ArrowRight, ShieldCheck, Sparkles } from "lucide-react";
 
 import type { Product } from "./retailer-catalog";
 import MediaOrderCapture from "./media-order-capture";
@@ -399,51 +400,58 @@ export default function TextOrderReview({
       aria-labelledby="text-order-title"
       className="overflow-hidden rounded-2xl border border-[#dbe6dd] bg-white shadow-sm"
     >
-      {/* Header */}
-      <div className="border-b border-[#e8efe8] bg-[#f7faf6] p-5 sm:p-6">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-[#176b52]">
-              Faster ordering
-            </p>
+      {/* A clear entry point for the three existing capture methods. */}
+      <div className="border-b border-[#285541] bg-[#173f30] px-5 py-6 text-white sm:px-7 sm:py-8">
+        <div className="flex flex-wrap items-start justify-between gap-5">
+          <div className="flex min-w-0 items-start gap-4">
+            <span className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-[#2a6049] text-[#d8f5df]" aria-hidden="true">
+              <Sparkles size={24} strokeWidth={1.8} />
+            </span>
 
-            <h2
-              id="text-order-title"
-              className="mt-1 text-xl font-semibold text-[#17372c]"
-            >
-              Order by message
-            </h2>
+            <div className="min-w-0">
+              <h2
+                id="text-order-title"
+                className="text-2xl font-semibold tracking-tight text-white sm:text-[28px]"
+              >
+                Order by message
+              </h2>
+              <p className="mt-2 max-w-xl text-sm leading-6 text-[#d5e7dc]">
+                Turn a message, handwritten list, or Hindi voice note into an
+                order draft.
+              </p>
+            </div>
           </div>
 
-          <span className="rounded-full border border-[#d4e3d7] bg-white px-3 py-1 text-xs font-medium text-[#176b52]">
+          <span className="inline-flex shrink-0 items-center gap-2 rounded-full border border-[#497b63] bg-[#285742] px-3 py-1.5 text-xs font-semibold text-[#e4f6e8]">
+            <span className="size-1.5 rounded-full bg-[#b6e8c3]" aria-hidden="true" />
             AI-assisted
           </span>
         </div>
-
-        <p className="mt-3 text-sm leading-6 text-[#64766a]">
-          Type products and quantities in English or
-          Hinglish. Review every match before adding
-          anything to your cart.
-        </p>
       </div>
 
-      <div className="space-y-5 p-5 sm:p-6">
-        {/* Message Input */}
+      <div className="space-y-6 bg-[#fafcf9] p-5 sm:p-7">
+        {/* Existing text, photo and voice flows share this form. */}
         <form
           onSubmit={(event) => void analyze(event)}
-          className="space-y-3"
+          aria-busy={busy || mediaBusy}
+          className="space-y-4"
         >
-          <label
-            htmlFor="text-order-message"
-            className="block text-sm font-semibold text-[#17372c]"
-          >
-            Your order message
-          </label>
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <label
+              htmlFor="text-order-message"
+              className="text-sm font-semibold text-[#17372c]"
+            >
+              Your order message
+            </label>
+            <span className="text-xs font-medium text-[#597062]">
+              English or Hinglish · Up to 15 lines
+            </span>
+          </div>
 
-          <div className="overflow-hidden rounded-2xl border border-[#d7e3d8] bg-white transition focus-within:border-[#176b52] focus-within:ring-2 focus-within:ring-[#176b52]/15">
+          <div className="overflow-hidden rounded-2xl border border-[#d2e2d6] bg-white shadow-sm transition-colors focus-within:border-[#176b52] focus-within:ring-4 focus-within:ring-[#176b52]/10">
             <textarea
               id="text-order-message"
-              rows={3}
+              rows={4}
               maxLength={2000}
               disabled={busy || mediaBusy}
               value={message}
@@ -451,41 +459,58 @@ export default function TextOrderReview({
                 saveMessage(event.target.value);
                 resetReview();
               }}
-              placeholder="Type your order in English or Hinglish?"
-              className="block w-full resize-y bg-transparent px-4 py-3 text-sm text-[#17372c] outline-none"
+              placeholder={"For example:\n4 cases Detergent Powder 1kg\n10 cases Glucose Biscuit 75g"}
+              className="block min-h-36 w-full resize-y bg-transparent px-5 py-4 text-base leading-7 text-[#17372c] outline-none placeholder:text-[#65776b] disabled:cursor-not-allowed disabled:bg-[#f6f7f5]"
             />
-            <div className="flex flex-wrap items-start justify-between gap-2 border-t border-[#e8efe8] px-2 py-2 sm:items-center">
-              <MediaOrderCapture
-                disabled={busy}
-                onBusyChange={setMediaBusy}
-                onTranscript={(transcript) => {
-                  if (message.trim() && !window.confirm(
-                    "Replace your current message with extracted text?"
-                  )) return false;
 
-                  saveMessage(transcript);
-                  resetReview();
-                  setNotice("Check extracted text and quantities, then select Analyze order.");
-                  return true;
-                }}
-              />
+            <div className="flex flex-col gap-3 border-t border-[#e1ebe3] bg-[#f3f7f2] px-3 py-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="min-w-0 rounded-xl border border-[#d9e6d9] bg-white p-1 shadow-sm">
+                <MediaOrderCapture
+                  disabled={busy}
+                  onBusyChange={setMediaBusy}
+                  onTranscript={(transcript) => {
+                    if (
+                      message.trim() &&
+                      !window.confirm(
+                        "Replace your current message with extracted text?"
+                      )
+                    ) {
+                      return false;
+                    }
+
+                    saveMessage(transcript);
+                    resetReview();
+                    setNotice(
+                      "Check extracted text and quantities, then select Analyze order."
+                    );
+                    return true;
+                  }}
+                />
+              </div>
 
               <button
                 type="submit"
                 disabled={busy || mediaBusy || !message.trim() || products.length === 0}
-                className="inline-flex min-h-10 shrink-0 items-center gap-2 rounded-xl bg-[#176b52] px-4 text-sm font-semibold text-white transition hover:bg-[#10543e] disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex min-h-12 w-full shrink-0 items-center justify-center gap-2 rounded-xl bg-[#176b52] px-5 text-sm font-semibold text-white transition-colors hover:bg-[#10543e] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#176b52] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
               >
-                {busy ? "Analyzing?" : "Analyze order"}
+                {busy ? "Analyzing order…" : "Analyze order"}
+                {!busy && <ArrowRight size={17} aria-hidden="true" />}
               </button>
             </div>
           </div>
 
-          <p className="text-xs leading-5 text-[#64766a]">
-            Type, attach a handwritten photo or record a Hindi voice note.
-            Media is sent to Google Gemini for transcription, then
-            returned as editable text. Check quantities before analyzing;
-            nothing is ordered automatically. Up to 15 order lines.
-          </p>
+          <div className="flex items-start gap-3 rounded-xl border border-[#e0e9df] bg-white px-4 py-3">
+            <ShieldCheck
+              size={19}
+              className="mt-0.5 shrink-0 text-[#176b52]"
+              aria-hidden="true"
+            />
+            <p className="text-xs leading-5 text-[#536a5d]">
+              Photo and audio are sent to Google Gemini for transcription into
+              editable text. Check the results and confirm your matches before
+              anything is added to your cart.
+            </p>
+          </div>
         </form>
 
         {/* Error */}
@@ -510,8 +535,8 @@ export default function TextOrderReview({
 
         {/* Review Results */}
         {result && (
-          <div className="space-y-5 border-t border-[#e8efe8] pt-5">
-            <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="space-y-5 border-t border-[#e0eae1] pt-6">
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[#d8e8da] bg-[#edf6ee] p-4">
               <div>
                 <h3 className="text-lg font-semibold text-[#17372c]">
                   Review extracted items

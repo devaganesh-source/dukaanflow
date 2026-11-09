@@ -165,11 +165,8 @@ export default function LoadingListBuilder({ orders }: Props) {
         </div>
 
         <p className="mt-2 text-sm leading-6 text-[#64766a]">
-          Showing up to 50 most recent submitted and
-          50 most recent exported orders. On-hold orders
-          are not eligible. For older orders, enter their
-          IDs below. A preview includes a maximum of
-          50 unique orders.
+          Select submitted or exported orders to load. Held orders cannot be included.
+          For older orders, enter their IDs below (up to 50 orders per list).
         </p>
 
         {eligible.length === 0 ? (
@@ -229,8 +226,7 @@ export default function LoadingListBuilder({ orders }: Props) {
         />
 
         <p className="mt-2 text-xs text-[#64766a]">
-          The backend checks that every order exists
-          and is not credit-held.
+          Separate multiple order IDs with commas or spaces.
         </p>
 
         {error && (

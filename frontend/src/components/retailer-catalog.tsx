@@ -1,6 +1,7 @@
 
 "use client";
 
+import Link from "next/link";
 import { useMemo, useRef, useState } from "react";
 import {
   ArrowRight,
@@ -139,6 +140,13 @@ export default function RetailerCatalog({
             <span className="hidden rounded-full bg-[#edf5ef] px-3 py-2 text-xs font-medium text-[#176b52] sm:inline">
               {retailerName}
             </span>
+            <Link
+              href="/orders"
+              aria-label="View my orders"
+              className="inline-flex min-h-11 items-center rounded-xl px-3 text-sm font-semibold text-[#176b52] transition-colors hover:bg-[#edf5ef] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#176b52]"
+            >
+              My orders
+            </Link>
 
             <LogoutButton />
           </div>

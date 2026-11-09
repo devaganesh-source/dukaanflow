@@ -1,14 +1,8 @@
 
 import { Suspense } from "react";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { connection } from "next/server";
-import {
-  ClipboardList,
-  Store,
-  Users,
-  Clock3,
-} from "lucide-react";
+import { Store, Users, Clock3 } from "lucide-react";
 
 import LogoutButton from "@/components/logout-button";
 import {
@@ -158,7 +152,7 @@ async function OrderDeskContent() {
           <LogoutButton />
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2">
           <div className="rounded-2xl border border-[#e1e8e1] bg-white p-5">
             <Users
               size={22}
@@ -191,23 +185,6 @@ async function OrderDeskContent() {
             </p>
           </div>
 
-          <Link
-            href="/order-desk/orders"
-            className="block rounded-2xl border border-[#e1e8e1] bg-white p-5 transition hover:border-[#176b52]"
-          >
-            <ClipboardList
-              size={22}
-              className="text-[#176b52]"
-            />
-
-            <p className="mt-4 font-semibold">
-              Manage orders
-            </p>
-
-            <p className="mt-1 text-sm text-[#64766a]">
-              Review, update and export orders
-            </p>
-          </Link>
         </div>
 
         <section className="mt-7 overflow-hidden rounded-2xl border border-[#e1e8e1] bg-white">
@@ -224,8 +201,7 @@ async function OrderDeskContent() {
                 </h2>
 
                 <p className="mt-1 text-sm text-[#64766a]">
-                  Last order at least 14 × 24 hours ago,
-                  or no recorded order.
+                  No order in the last 14 days, or no previous order.
                 </p>
               </div>
             </div>

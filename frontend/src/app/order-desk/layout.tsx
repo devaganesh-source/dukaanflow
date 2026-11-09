@@ -1,5 +1,5 @@
 
-import Link from "next/link";
+import OrderDeskNav from "@/components/order-desk-nav";
 import type { ReactNode } from "react";
 
 export default function OrderDeskLayout({
@@ -21,31 +21,7 @@ export default function OrderDeskLayout({
             </p>
           </div>
 
-          <nav
-            aria-label="Order desk navigation"
-            className="flex items-center gap-2"
-          >
-            <Link
-              href="/order-desk"
-              className="inline-flex min-h-11 items-center rounded-xl px-4 text-sm font-medium text-[#176b52] hover:bg-[#edf5ef]"
-            >
-              Retailers
-            </Link>
-
-            <Link
-              href="/order-desk/loading-list"
-              className="inline-flex min-h-11 items-center rounded-xl px-4 text-sm font-medium text-[#176b52] hover:bg-[#edf5ef]"
-            >
-              Van loading
-            </Link>
-
-            <Link
-              href="/order-desk/orders"
-              className="inline-flex min-h-11 items-center rounded-xl bg-[#176b52] px-4 text-sm font-semibold text-white hover:bg-[#12543f]"
-            >
-              Orders
-            </Link>
-          </nav>
+          <OrderDeskNav />
         </div>
       </header>
 

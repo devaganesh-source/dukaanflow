@@ -205,7 +205,7 @@ export default function LoginPage() {
         </div>
 
         <p className="text-sm text-[#b1cfc0]">
-          Built for distributors and retailers.
+          Built for retailers, field sales and distributors.
         </p>
       </section>
 
@@ -374,8 +374,7 @@ export default function LoginPage() {
                 className="mt-0.5 shrink-0 text-[#176b52]"
               />
               <p className="text-xs leading-5 text-[#718076]">
-                Access is limited to registered retailers
-                and authorized order-desk staff.
+                Access is limited to registered retailers, field sales staff and authorized distributor staff.
               </p>
             </div>
           </div>
